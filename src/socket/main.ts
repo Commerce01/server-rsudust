@@ -1,5 +1,6 @@
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { db } from "../config/database";
 
 function socketServer() {
   const httpServer = createServer();
@@ -15,14 +16,23 @@ function socketServer() {
       console.log("user disconnected");
     });
 
-    socket.on("event", (msg) => {
-      //   console.log("co2: " + co2 + "pm25:" + pm25);
-      //   socket.emit("count", co2, pm25);
-      console.log("event", msg);
-      socket.emit("event");
-    });
+    setInterval(async () => {
+      const minutelevel = await db.minuteDustLevel.findMany({
+        orderBy: { timestamp: "desc" },
+        take: 1,
+      });
+      console.log(
+        "co2: " + minutelevel[0].co2Level + "pm25:" + minutelevel[0].pm25Level
+      );
+      socket.emit(
+        "building-five",
+        minutelevel[0].co2Level,
+        minutelevel[0].pm25Level
+      );
+    }, 1000 * 60);
+    // console.log("event", msg);
+    // socket.emit("event");
   });
-
   return httpServer;
 }
 

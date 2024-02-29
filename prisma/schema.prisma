@@ -23,7 +23,8 @@ model MinuteDustLevel {
 
 model DailyDustLevel {
   id           Int      @id @default(autoincrement())
-  data         String[]
+  pm25Level    Float[]
+  co2Level     Float[]
   avgpm25Level Float
   avgco2Level  Float
   location     String   @default("Building 5")
