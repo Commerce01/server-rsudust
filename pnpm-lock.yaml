@@ -6,7 +6,7 @@ settings:
 
 dependencies:
   '@line/bot-sdk':
-    specifier: ^8.4.1
+    specifier: ^8.4.0
     version: 8.4.1
   '@prisma/client':
     specifier: ^5.10.2

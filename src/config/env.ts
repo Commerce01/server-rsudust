@@ -4,6 +4,7 @@ import "dotenv/config";
 export const envSchema = z.object({
   API_PORT: z.string().default("8080"),
   SOCKET_PORT: z.string().default("5000"),
+  BOT_PORT: z.string().default("6000"),
   LINE_ACCESS_TOKEN: z.string().default(""),
   LINE_CHANNEL_SECRET: z.string().default(""),
 });
