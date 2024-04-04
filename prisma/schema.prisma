@@ -30,3 +30,23 @@ model DailyDustLevel {
   location     String   @default("Building 5")
   timestamp    DateTime @default(now())
 }
+
+model MonthlyDustLevel {
+  id           Int      @id @default(autoincrement())
+  pm25Level    Float[]
+  co2Level     Float[]
+  avgPm25Level Float
+  avgCo2Level  Float
+  location     String   @default("Building 5")
+  timestamp    DateTime @default(now())
+}
+
+model YearlyDustLevel {
+  id           Int      @id @default(autoincrement())
+  pm25Level    Float[]
+  co2Level     Float[]
+  avgPm25Level Float
+  avgCo2Level  Float
+  location     String   @default("Building 5")
+  timestamp    DateTime @default(now())
+}

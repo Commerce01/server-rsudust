@@ -56,7 +56,7 @@ const handleEvent = async (event: line.WebhookEvent) => {
                   {
                     type: "uri",
                     label: "รายละเอียดเพิ่มเติม",
-                    uri: "https://www.youtube.com/",
+                    uri: "",
                   },
                 ],
               },
@@ -67,7 +67,7 @@ const handleEvent = async (event: line.WebhookEvent) => {
                   {
                     type: "uri",
                     label: "รายละเอียดเพิ่มเติม",
-                    uri: "https://www.youtube.com/",
+                    uri: "",
                   },
                 ],
               },
@@ -95,7 +95,7 @@ const handleEvent = async (event: line.WebhookEvent) => {
                   {
                     type: "uri",
                     label: "รายละเอียดเพิ่มเติม",
-                    uri: "https://www.youtube.com/",
+                    uri: "",
                   },
                 ],
               },
@@ -106,7 +106,7 @@ const handleEvent = async (event: line.WebhookEvent) => {
                   {
                     type: "uri",
                     label: "รายละเอียดเพิ่มเติม",
-                    uri: "https://www.youtube.com/",
+                    uri: "",
                   },
                 ],
               },

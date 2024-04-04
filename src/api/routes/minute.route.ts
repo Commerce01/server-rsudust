@@ -14,7 +14,17 @@ router.post("/minute-level", async (req, res) => {
 });
 
 router.get("/minute-level", async (req, res) => {
-  const minutedust = await db.minuteDustLevel.findMany();
+  const today = new Date().getHours();
+  const todaySet = new Date().setHours(today, 0, 0, 0);
+  const date = new Date(todaySet);
+  const minutedust = await db.minuteDustLevel.findMany({
+    where: {
+      timestamp: {
+        gte: date,
+      },
+    },
+  });
+
   return res.json(minutedust);
 });
 
