@@ -24,8 +24,24 @@ router.post("/daily-level", async (req, res) => {
 });
 
 router.get("/daily-level", async (req, res) => {
-  const minutedust = await db.dailyDustLevel.findMany();
-  return res.json(minutedust);
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStartOfDay = new Date(yesterday.setHours(0, 0, 0, 0)); // Convert to Date object
+  const todayStartOfDay = new Date().setHours(0, 0, 0, 0); // Today's start of day
+  const dailydust = await db.dailyDustLevel.findFirst({
+    where: {
+      // Filter by timestamp greater than or equal to yesterday's 00:00:00 and less than today's 00:00:00
+      timestamp: {
+        gte: yesterdayStartOfDay, // Use the converted Date object
+        lte: new Date(todayStartOfDay), // Convert to Date object
+      },
+    },
+    orderBy: {
+      timestamp: "asc",
+    },
+  });
+
+  return res.json(dailydust);
 });
 
 export { router as dailyRoute };

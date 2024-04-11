@@ -25,7 +25,14 @@ router.get("/minute-level", async (req, res) => {
     },
   });
 
-  return res.json(minutedust);
+  const getMinute = minutedust.map((d) => {
+    return {
+      ...d,
+      minute: new Date(d.timestamp).getMinutes() + "นาที",
+    };
+  });
+
+  return res.json(getMinute);
 });
 
 export { router as minuteRoute };

@@ -4,38 +4,51 @@ import { DailyDustLevel } from "@prisma/client";
 
 const router = Router();
 
-router.get("/month-level", async (req, res) => {
-  const dailydust = await db.dailyDustLevel.findMany();
+function calculateMonthlyAverage(
+  dustData: DailyDustLevel[],
+  month: number
+): { averageDust: number; averageCo2: number } | null {
+  const filteredData = dustData.filter(
+    (entry) => new Date(entry.timestamp).getMonth() === month
+  );
 
-  if (!dailydust || dailydust.length === 0) {
-    console.error("No daily dust level data found!");
+  if (filteredData.length === 0) {
     return null;
   }
 
-  function calculateMonthlyAverage(
-    dustData: DailyDustLevel[],
-    month: number
-  ): { averageDust: number; averageCo2: number } | null {
-    const filteredData = dustData.filter(
-      (entry) => new Date(entry.timestamp).getMonth() === month
+  const totalDust = filteredData.reduce(
+    (acc: number, curr: DailyDustLevel) => acc + curr.avgpm25Level,
+    0
+  );
+  const averageDust = totalDust / filteredData.length;
+
+  const totalCo2 = filteredData.reduce(
+    (acc: number, curr: DailyDustLevel) => acc + curr.avgco2Level,
+    0
+  );
+  const averageCo2 = totalCo2 / filteredData.length;
+  return { averageDust, averageCo2 };
+}
+
+router.get("/month-level", async (req, res) => {
+  const { daily } = req.query;
+  const dailydust = await db.dailyDustLevel.findMany({
+    orderBy: {
+      timestamp: "asc",
+    },
+  });
+
+  if (!dailydust || dailydust.length === 0) {
+    console.error("No daily dust level data found!");
+    return res.status(404).json({ error: "No daily dust level data found!" });
+  }
+
+  if (daily === "true") {
+    const getMonth = dailydust.filter(
+      (d) => new Date(d.timestamp).getMonth() === Number(3)
     );
 
-    if (filteredData.length === 0) {
-      return null;
-    }
-
-    const totalDust = filteredData.reduce(
-      (acc: number, curr: DailyDustLevel) => acc + curr.avgpm25Level,
-      0
-    );
-    const averageDust = totalDust / filteredData.length;
-
-    const totalCo2 = filteredData.reduce(
-      (acc: number, curr: DailyDustLevel) => acc + curr.avgco2Level,
-      0
-    );
-    const averageCo2 = totalCo2 / filteredData.length;
-    return { averageDust, averageCo2 };
+    return res.json(getMonth);
   }
 
   let arr = [];
