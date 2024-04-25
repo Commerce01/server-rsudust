@@ -29,7 +29,7 @@ function socketServer() {
         minutelevel[0].co2Level,
         minutelevel[0].pm25Level
       );
-    }, 1000 * 60);
+    }, 5000);
     // console.log("event", msg);
     // socket.emit("event");
   });
