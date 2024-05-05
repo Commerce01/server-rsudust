@@ -31,12 +31,30 @@ function calculateMonthlyAverage(
 }
 
 router.get("/month-level", async (req, res) => {
-  const { daily } = req.query;
+  const { daily, month, year } = req.query;
   const dailydust = await db.dailyDustLevel.findMany({
     orderBy: {
       timestamp: "asc",
     },
   });
+
+  if (year) {
+    const getYear = dailydust.filter(
+      (d) => new Date(d.timestamp).getFullYear() === Number(year)
+    );
+
+    return res.json(getYear);
+  }
+
+  if (month) {
+    const getMonth = dailydust.filter(
+      (d) => new Date(d.timestamp).getMonth() === Number(month) - 1
+    );
+
+    console.log(dailydust);
+
+    return res.json(getMonth);
+  }
 
   if (!dailydust || dailydust.length === 0) {
     console.error("No daily dust level data found!");
