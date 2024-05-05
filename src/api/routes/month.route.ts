@@ -43,7 +43,24 @@ router.get("/month-level", async (req, res) => {
       (d) => new Date(d.timestamp).getFullYear() === Number(year)
     );
 
-    return res.json(getYear);
+    let arr = [];
+    for (let i = 0; i < 12; i++) {
+      const monthAverage = calculateMonthlyAverage(getYear, i);
+      // if (monthAverage !== null) {
+      //     console.log(`Average dust level for month ${i + 1}:`, monthAverage);
+      // }
+      arr.push({
+        month: i + 1,
+        pm25Average: monthAverage?.averageDust,
+        co2Average: monthAverage?.averageCo2,
+      });
+    }
+
+    const filteredArr = arr.filter(
+      (entry) => entry.co2Average && entry.pm25Average !== null
+    );
+
+    return res.json(filteredArr);
   }
 
   if (month) {
