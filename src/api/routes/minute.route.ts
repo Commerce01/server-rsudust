@@ -14,6 +14,7 @@ router.post("/minute-level", async (req, res) => {
 });
 
 router.get("/minute-level", async (req, res) => {
+  const { hour } = req.query;
   const today = new Date().getHours();
   const todaySet = new Date().setHours(today, 0, 0, 0);
   const date = new Date(todaySet);
@@ -24,6 +25,13 @@ router.get("/minute-level", async (req, res) => {
       },
     },
   });
+
+  if (hour) {
+    const getHour = minutedust.filter(
+      (d) => new Date(d.timestamp).getHours() === Number(hour)
+    );
+    return res.json(getHour);
+  }
 
   const getMinute = minutedust.map((d) => {
     return {
