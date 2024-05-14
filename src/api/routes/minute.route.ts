@@ -43,7 +43,7 @@ router.get("/minute-level", async (req, res) => {
     const getMinute = getHour.map((d) => {
       return {
         ...d,
-        minute: new Date(d.timestamp).getMinutes() + "นาที",
+        minute: new Date(d.timestamp).getMinutes(),
       };
     });
 
@@ -53,7 +53,7 @@ router.get("/minute-level", async (req, res) => {
   const getMinute = minutedust.map((d) => {
     return {
       ...d,
-      minute: new Date(d.timestamp).getMinutes() + "นาที",
+      minute: new Date(d.timestamp).getMinutes(),
     };
   });
 
