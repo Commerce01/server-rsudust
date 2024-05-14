@@ -4,6 +4,21 @@ import { MinuteDustLevel } from "@prisma/client";
 
 const router = Router();
 
+const monthsThai = [
+  "มกราคม", // January
+  "กุมภาพันธ์", // February
+  "มีนาคม", // March
+  "เมษายน", // April
+  "พฤษภาคม", // May
+  "มิถุนายน", // June
+  "กรกฎาคม", // July
+  "สิงหาคม", // August
+  "กันยายน", // September
+  "ตุลาคม", // October
+  "พฤศจิกายน", // November
+  "ธันวาคม", // December
+];
+
 function calculateMonthlyAverage(
   dustData: MinuteDustLevel[],
   month: number
@@ -30,8 +45,29 @@ function calculateMonthlyAverage(
   return { averageDust, averageCo2 };
 }
 
+function findAvgByDay(day: number, dailydust: MinuteDustLevel[]) {
+  const pm25Level = dailydust
+    .filter((dust) => new Date(dust.timestamp).getDate() === day)
+    .map((dust) => dust.pm25Level);
+  const co2Level = dailydust
+    .filter((dust) => new Date(dust.timestamp).getDate() === day)
+    .map((dust) => dust.co2Level);
+  const avgPm25 =
+    pm25Level.reduce((acc: number, cur: number) => acc + cur, 0) /
+    pm25Level.length;
+  const avgCo2 =
+    co2Level.reduce((acc: number, cur: number) => acc + cur, 0) /
+    co2Level.length;
+
+  return {
+    pm25: avgPm25,
+    co2: avgCo2,
+  };
+}
+
 router.get("/month-level", async (req, res) => {
   const { daily, month, year } = req.query;
+  const today = new Date();
   const dailydust = await db.minuteDustLevel.findMany({
     orderBy: {
       timestamp: "asc",
@@ -68,9 +104,15 @@ router.get("/month-level", async (req, res) => {
       (d) => new Date(d.timestamp).getMonth() === Number(month) - 1
     );
 
-    console.log(dailydust);
-
-    return res.json(getMonth);
+    const avgByDay = Array.from({ length: 31 }, (_, i) => {
+      const { pm25, co2 } = findAvgByDay(i + 1, getMonth);
+      return {
+        name: `${i + 1}/${Number(month)}/${today.getFullYear()}`,
+        pm25: pm25,
+        co2: co2,
+      };
+    });
+    return res.json(avgByDay);
   }
 
   if (!dailydust || dailydust.length === 0) {
@@ -80,10 +122,18 @@ router.get("/month-level", async (req, res) => {
 
   if (daily === "true") {
     const getMonth = dailydust.filter(
-      (d) => new Date(d.timestamp).getMonth() === Number(3)
+      (d) => new Date(d.timestamp).getMonth() === Number(today.getMonth())
     );
 
-    return res.json(getMonth);
+    const avgByDay = Array.from({ length: 31 }, (_, i) => {
+      const { pm25, co2 } = findAvgByDay(i + 1, getMonth);
+      return {
+        name: `${i + 1}/${today.getMonth() + 1}/${today.getFullYear()}`,
+        pm25: pm25,
+        co2: co2,
+      };
+    });
+    return res.json(avgByDay);
   }
 
   let arr = [];
@@ -93,15 +143,13 @@ router.get("/month-level", async (req, res) => {
     //     console.log(`Average dust level for month ${i + 1}:`, monthAverage);
     // }
     arr.push({
-      month: i + 1,
-      pm25Average: monthAverage?.averageDust,
-      co2Average: monthAverage?.averageCo2,
+      name: monthsThai[i],
+      pm25: monthAverage?.averageDust || null,
+      co2: monthAverage?.averageCo2 || null,
     });
   }
 
-  const filteredArr = arr.filter(
-    (entry) => entry.co2Average && entry.pm25Average !== null
-  );
+  const filteredArr = arr.filter((entry) => entry.co2 && entry.pm25 !== null);
 
   return res.json(arr);
 });
