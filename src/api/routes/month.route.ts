@@ -103,7 +103,7 @@ router.get("/month-level", async (req, res) => {
     (entry) => entry.co2Average && entry.pm25Average !== null
   );
 
-  return res.json(filteredArr);
+  return res.json(arr);
 });
 
 export { router as monthRoute };
