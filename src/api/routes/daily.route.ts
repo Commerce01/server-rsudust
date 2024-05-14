@@ -56,8 +56,9 @@ router.get("/daily-level", async (req, res) => {
 
     const avgByHour = Array.from({ length: 24 }, (_, i) => {
       const { pm25, co2 } = findAvgByHour(i, dailydust);
+      const changeTimeZone = i + 7 > 23 ? i + 7 - 24 : i + 7;
       return {
-        name: `${i}:00 น.`,
+        name: `${changeTimeZone}:00 น.`,
         pm25: pm25,
         co2: co2,
       };
@@ -81,8 +82,9 @@ router.get("/daily-level", async (req, res) => {
 
   const avgByHour = Array.from({ length: 24 }, (_, i) => {
     const { pm25, co2 } = findAvgByHour(i, dailydust);
+    const changeTimeZone = i + 7 > 23 ? i + 7 - 24 : i + 7;
     return {
-      name: `${i}:00 น.`,
+      name: `${changeTimeZone}:00 น.`,
       pm25: pm25,
       co2: co2,
     };
