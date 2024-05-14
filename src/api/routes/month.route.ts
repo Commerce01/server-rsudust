@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { db } from "../../config/database";
-import { DailyDustLevel } from "@prisma/client";
+import { MinuteDustLevel } from "@prisma/client";
 
 const router = Router();
 
 function calculateMonthlyAverage(
-  dustData: DailyDustLevel[],
+  dustData: MinuteDustLevel[],
   month: number
 ): { averageDust: number; averageCo2: number } | null {
   const filteredData = dustData.filter(
@@ -17,13 +17,13 @@ function calculateMonthlyAverage(
   }
 
   const totalDust = filteredData.reduce(
-    (acc: number, curr: DailyDustLevel) => acc + curr.avgpm25Level,
+    (acc: number, curr: MinuteDustLevel) => acc + curr.co2Level,
     0
   );
   const averageDust = totalDust / filteredData.length;
 
   const totalCo2 = filteredData.reduce(
-    (acc: number, curr: DailyDustLevel) => acc + curr.avgco2Level,
+    (acc: number, curr: MinuteDustLevel) => acc + curr.pm25Level,
     0
   );
   const averageCo2 = totalCo2 / filteredData.length;
@@ -32,7 +32,7 @@ function calculateMonthlyAverage(
 
 router.get("/month-level", async (req, res) => {
   const { daily, month, year } = req.query;
-  const dailydust = await db.dailyDustLevel.findMany({
+  const dailydust = await db.minuteDustLevel.findMany({
     orderBy: {
       timestamp: "asc",
     },
