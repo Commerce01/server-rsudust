@@ -59,7 +59,7 @@ const handleEvent = async (event: line.WebhookEvent) => {
                   {
                     type: "uri",
                     label: "รายละเอียดเพิ่มเติม",
-                    uri: "https://www.youtube.com/",
+                    uri: "http://air4thai.pcd.go.th/webV3/#/AQIInfo",
                   },
                 ],
               },
@@ -70,7 +70,7 @@ const handleEvent = async (event: line.WebhookEvent) => {
                   {
                     type: "uri",
                     label: "รายละเอียดเพิ่มเติม",
-                    uri: "https://www.youtube.com/",
+                    uri: "http://air4thai.pcd.go.th/webV3/#/AQIInfo",
                   },
                 ],
               },
