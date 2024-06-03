@@ -95,7 +95,7 @@ router.get("/daily-level", async (req, res) => {
   // สร้างข้อมูลสำหรับผลลัพธ์ 24 ชั่วโมง
   const avgByHour = Array.from({ length: 24 }, (_, i) => {
     const { pm25, co2 } = findAvgByHour(i, dailydust);
-    const changeTimeZone = i + 7 > 23 ? i + 7 - 24 : i + 7;
+    const changeTimeZone = i;
     return {
       name: `${changeTimeZone}:00 น.`,
       pm25: pm25,
