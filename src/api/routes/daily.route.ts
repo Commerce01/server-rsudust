@@ -61,7 +61,7 @@ router.get("/daily-level", async (req, res) => {
         },
       },
     });
-
+    console.log(dailydust);
     // คำนวณค่าเฉลี่ย PM2.5 และ CO2 แยกตามชั่วโมงสำหรับข้อมูลที่กรองแล้ว
     const avgByHour = Array.from({ length: 24 }, (_, i) => {
       // เรียกใช้ฟังก์ชัน helper เพื่อหาค่าเฉลี่ย
