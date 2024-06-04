@@ -42,26 +42,32 @@ router.get("/daily-level", async (req, res) => {
   const { date } = req.query;
   // คำนวณวันที่เมื่อวาน
   const yesterday = new Date();
+  const today = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   // ตั้งค่า timestamp สำหรับจุดเริ่มต้นของเมื่อวานและวันนี้
   const yesterdayStartOfDay = new Date(yesterday.setHours(0, 0, 0, 0)); // แปลงเป็น Date object
   const todayStartOfDay = new Date().setHours(0, 0, 0, 0); // แปลงเป็น Date object
+  let startDate = new Date(today.setHours(0, 0, 0, 0));
   // จัดการ request ที่มีพารามิเตอร์ "date" ระบุ
   if (date) {
     // กรองข้อมูลฝุ่นละอองสำหรับช่วงวันที่ระบุ (จากวันที่ร้องขอถึงวันถัดไป)
     const dailydust = await db.minuteDustLevel.findMany({
       where: {
         timestamp: {
-          gte: new Date(date as string), // กรองจากวันที่ร้องขอ
-          lt: new Date( // กรองถึงวันถัดไป
-            new Date(date as string).setDate(
-              new Date(date as string).getDate() + 1 // เพิ่ม 1 วัน
-            )
-          ), // Convert to Date object
+          // gte: new Date(date as string), // กรองจากวันที่ร้องขอ
+          gte: startDate,
+          lt: new Date(),
+          // lt: new Date( // กรองถึงวันถัดไป
+          //   new Date(date as string).setDate(
+          //     new Date(date as string).getDate() + 1 // เพิ่ม 1 วัน
+          //   )
+          // ), // Convert to Date object
         },
       },
     });
-    console.log(dailydust);
+    // console.log(dailydust);
+    console.log(startDate);
+    console.log(new Date());
     // คำนวณค่าเฉลี่ย PM2.5 และ CO2 แยกตามชั่วโมงสำหรับข้อมูลที่กรองแล้ว
     const avgByHour = Array.from({ length: 24 }, (_, i) => {
       // เรียกใช้ฟังก์ชัน helper เพื่อหาค่าเฉลี่ย
