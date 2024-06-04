@@ -42,21 +42,24 @@ router.get("/daily-level", async (req, res) => {
   const { date } = req.query;
   // คำนวณวันที่เมื่อวาน
   const yesterday = new Date();
-  const today = new Date();
+
   yesterday.setDate(yesterday.getDate() - 1);
   // ตั้งค่า timestamp สำหรับจุดเริ่มต้นของเมื่อวานและวันนี้
   const yesterdayStartOfDay = new Date(yesterday.setHours(0, 0, 0, 0)); // แปลงเป็น Date object
   const todayStartOfDay = new Date().setHours(0, 0, 0, 0); // แปลงเป็น Date object
-  let startDate = new Date(today.setHours(0, 0, 0, 0));
+
   // จัดการ request ที่มีพารามิเตอร์ "date" ระบุ
   if (date) {
+    const today = new Date(date as string);
+    const startDate = new Date(today.setHours(0, 0, 0, 0));
+    const endDate = new Date(today.setHours(23, 59, 59, 999));
     // กรองข้อมูลฝุ่นละอองสำหรับช่วงวันที่ระบุ (จากวันที่ร้องขอถึงวันถัดไป)
     const dailydust = await db.minuteDustLevel.findMany({
       where: {
         timestamp: {
           // gte: new Date(date as string), // กรองจากวันที่ร้องขอ
           gte: startDate,
-          lt: new Date(),
+          lt: endDate,
           // lt: new Date( // กรองถึงวันถัดไป
           //   new Date(date as string).setDate(
           //     new Date(date as string).getDate() + 1 // เพิ่ม 1 วัน
